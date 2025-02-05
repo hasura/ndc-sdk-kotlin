@@ -1,8 +1,8 @@
-package hasura.ndc.connector
+package io.hasura.ndc.connector
 
 import com.vdurmont.semver4j.Requirement
 import com.vdurmont.semver4j.Semver
-import hasura.ndc.ir.*
+import io.hasura.ndc.ir.*
 import io.micrometer.core.instrument.binder.jvm.JvmGcMetrics
 import io.micrometer.core.instrument.binder.jvm.JvmMemoryMetrics
 import io.micrometer.core.instrument.binder.system.ProcessorMetrics
@@ -52,7 +52,7 @@ suspend fun <Configuration, State> startServer(
     options: ServerOptions
 ) {
     val vertx = Vertx.vertx()
-    
+
     vertx.deployVerticle(object : CoroutineVerticle(), CoroutineRouterSupport {
         private val logger = LoggerFactory.getLogger(this::class.java)
 
@@ -62,7 +62,7 @@ suspend fun <Configuration, State> startServer(
 
             // Initialize metrics
             val appMicrometerRegistry = PrometheusMeterRegistry(PrometheusConfig.DEFAULT)
-            
+
             // Add JVM metrics collectors
             JvmMemoryMetrics().bindTo(appMicrometerRegistry)
             JvmGcMetrics().bindTo(appMicrometerRegistry)
@@ -85,27 +85,29 @@ suspend fun <Configuration, State> startServer(
                     is IllegalArgumentException -> 400
                     else -> 500
                 }
-                
+
                 ConnectorLogger.logger.error("Request failed", failure)
                 Telemetry.recordError(failure)
-                
+
                 ctx.response()
                     .setStatusCode(statusCode)
                     .putHeader("content-type", "application/json")
-                    .end(Json.encodeToString(ErrorResponse(
+                    .end(Json.encodeToString(
+                        ErrorResponse(
                         message = "Internal Error",
                         details = JsonObject(mapOf("cause" to JsonPrimitive(failure?.message ?: "Unknown error")))
-                    )))
+                    )
+                    ))
             }
 
             // Authentication middleware
-            router.route().handler { ctx -> 
-                authenticationHandler(ctx, options.serviceTokenSecret) 
+            router.route().handler { ctx ->
+                authenticationHandler(ctx, options.serviceTokenSecret)
             }
 
             // Version check middleware
-            router.route().handler { ctx -> 
-                versionCheckHandler(ctx) 
+            router.route().handler { ctx ->
+                versionCheckHandler(ctx)
             }
 
             // Routes
@@ -194,10 +196,12 @@ private fun authenticationHandler(ctx: RoutingContext, serviceTokenSecret: Strin
         ctx.response()
             .setStatusCode(401)
             .putHeader("content-type", "application/json")
-            .end(Json.encodeToString(ErrorResponse(
+            .end(Json.encodeToString(
+                ErrorResponse(
                 details = JsonObject(mapOf("cause" to JsonPrimitive("Bearer token does not match."))),
                 message = "Internal Error"
-            )))
+            )
+            ))
         return
     }
     ctx.next()
@@ -238,10 +242,12 @@ private fun handleVersionError(ctx: RoutingContext, message: String) {
     ctx.response()
         .setStatusCode(400)
         .putHeader("content-type", "application/json")
-        .end(Json.encodeToString(ErrorResponse(
+        .end(Json.encodeToString(
+            ErrorResponse(
             message = message,
             details = null
-        )))
+        )
+        ))
 }
 
 private inline fun <reified T> RoutingContext.sendJson(response: T) {
@@ -276,10 +282,12 @@ private suspend inline fun <reified T, reified R> RoutingContext.handleJsonReque
                 this.response()
                     .setStatusCode(400)
                     .putHeader("content-type", "application/json")
-                    .end(Json.encodeToString(ErrorResponse(
+                    .end(Json.encodeToString(
+                        ErrorResponse(
                         message = "Invalid JSON request body",
                         details = JsonObject(mapOf("cause" to JsonPrimitive(e.message ?: "Unknown error")))
-                    )))
+                    )
+                    ))
             }
             else -> throw e
         }

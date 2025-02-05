@@ -1,4 +1,4 @@
-package hasura.ndc.ir
+package io.hasura.ndc.ir
 
 import kotlinx.serialization.*
 import kotlinx.serialization.json.*
@@ -361,10 +361,10 @@ sealed class Field {
     @SerialName("column")
     data class Column(
         val column: String,
-        
+
         /**
-         * When the type of the column is a (possibly-nullable) array or object, 
-         * the caller can request a subset of the complete column data, by specifying 
+         * When the type of the column is a (possibly-nullable) array or object,
+         * the caller can request a subset of the complete column data, by specifying
          * fields to fetch here. If omitted, the column data will be fetched in full.
          */
         val fields: NestedField? = null,
