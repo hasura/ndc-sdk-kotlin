@@ -1,0 +1,227 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "io.hasura",
+    "module": "ndc-sdk-kotlin",
+    "version": "1.0.0",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "8.12.1"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.environment": "standard-jvm",
+        "org.gradle.jvm.version": 21,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api",
+        "org.jetbrains.kotlin.platform.type": "jvm"
+      },
+      "dependencies": [
+        {
+          "group": "org.jetbrains.kotlin",
+          "module": "kotlin-stdlib",
+          "version": {
+            "requires": "2.1.10"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "ndc-sdk-kotlin-1.0.0.jar",
+          "url": "ndc-sdk-kotlin-1.0.0.jar",
+          "size": 552728,
+          "sha512": "7bfc763d4fea91a0d6a77107a9fe1e87521e73e5131430f7b0527519d900bfcc0578c178171125127d1186fe68c64ca44c6a75ceb1395e1df676bb98fae6c5d1",
+          "sha256": "a9af1476982068d64084f3054f8183ca8cb60d2beb7a21f674d7c546a7cdbb4e",
+          "sha1": "f0a9ad724c26b0a499b0db96b1b2da427930b813",
+          "md5": "27520103f075687218f2620c11683416"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.environment": "standard-jvm",
+        "org.gradle.jvm.version": 21,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime",
+        "org.jetbrains.kotlin.platform.type": "jvm"
+      },
+      "dependencies": [
+        {
+          "group": "org.jetbrains.kotlinx",
+          "module": "kotlinx-cli",
+          "version": {
+            "requires": "0.3.6"
+          }
+        },
+        {
+          "group": "io.vertx",
+          "module": "vertx-core",
+          "version": {
+            "requires": "4.5.12"
+          }
+        },
+        {
+          "group": "io.vertx",
+          "module": "vertx-web",
+          "version": {
+            "requires": "4.5.12"
+          }
+        },
+        {
+          "group": "io.vertx",
+          "module": "vertx-lang-kotlin",
+          "version": {
+            "requires": "4.5.12"
+          }
+        },
+        {
+          "group": "io.vertx",
+          "module": "vertx-lang-kotlin-coroutines",
+          "version": {
+            "requires": "4.5.12"
+          }
+        },
+        {
+          "group": "ch.qos.logback",
+          "module": "logback-classic",
+          "version": {
+            "requires": "1.5.15"
+          }
+        },
+        {
+          "group": "org.jetbrains.kotlinx",
+          "module": "kotlinx-serialization-json",
+          "version": {
+            "requires": "1.8.0"
+          }
+        },
+        {
+          "group": "com.vdurmont",
+          "module": "semver4j",
+          "version": {
+            "requires": "3.1.0"
+          }
+        },
+        {
+          "group": "io.micrometer",
+          "module": "micrometer-core",
+          "version": {
+            "requires": "1.11.3"
+          }
+        },
+        {
+          "group": "io.micrometer",
+          "module": "micrometer-registry-prometheus",
+          "version": {
+            "requires": "1.11.3"
+          }
+        },
+        {
+          "group": "io.opentelemetry",
+          "module": "opentelemetry-api",
+          "version": {
+            "requires": "1.46.0"
+          }
+        },
+        {
+          "group": "io.opentelemetry",
+          "module": "opentelemetry-sdk",
+          "version": {
+            "requires": "1.46.0"
+          }
+        },
+        {
+          "group": "io.opentelemetry",
+          "module": "opentelemetry-extension-kotlin",
+          "version": {
+            "requires": "1.46.0"
+          }
+        },
+        {
+          "group": "io.opentelemetry.semconv",
+          "module": "opentelemetry-semconv",
+          "version": {
+            "requires": "1.30.0-rc.1"
+          }
+        },
+        {
+          "group": "io.opentelemetry",
+          "module": "opentelemetry-exporter-otlp",
+          "version": {
+            "requires": "1.46.0"
+          }
+        },
+        {
+          "group": "org.jetbrains.kotlin",
+          "module": "kotlin-stdlib",
+          "version": {
+            "requires": "2.1.10"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "ndc-sdk-kotlin-1.0.0.jar",
+          "url": "ndc-sdk-kotlin-1.0.0.jar",
+          "size": 552728,
+          "sha512": "7bfc763d4fea91a0d6a77107a9fe1e87521e73e5131430f7b0527519d900bfcc0578c178171125127d1186fe68c64ca44c6a75ceb1395e1df676bb98fae6c5d1",
+          "sha256": "a9af1476982068d64084f3054f8183ca8cb60d2beb7a21f674d7c546a7cdbb4e",
+          "sha1": "f0a9ad724c26b0a499b0db96b1b2da427930b813",
+          "md5": "27520103f075687218f2620c11683416"
+        }
+      ]
+    },
+    {
+      "name": "shadowRuntimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "shadowed",
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "ndc-sdk-kotlin-1.0.0-all.jar",
+          "url": "ndc-sdk-kotlin-1.0.0-all.jar",
+          "size": 18334006,
+          "sha512": "ca1674e9cbddb1b25e6299c4f3cb9e10a3520a8646d4f54503c79753339415cae1196610dcfef50ab776e0079a0764239fbd07c850fdda3a36b63b18d44689ac",
+          "sha256": "8a407daf15f28db10f09800c6432c1db23a937b428c4c5400466529d185e9613",
+          "sha1": "0b1051961494c7b4dcc12ae142cab732386b0b8e",
+          "md5": "1d8417e89d507eeee4a9d5891f1de509"
+        }
+      ]
+    },
+    {
+      "name": "sourcesElements",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "sources",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "ndc-sdk-kotlin-1.0.0-sources.jar",
+          "url": "ndc-sdk-kotlin-1.0.0-sources.jar",
+          "size": 16363,
+          "sha512": "9bce0668ecaedecbb419cacc9bf727ee3bfd73ecfc6b6f29aa1709c69e7bcd72ef95151ff1f9aa546d7b10c7db1bbf58a58c6bfdd4d6cf260fc09b5d704bb960",
+          "sha256": "08f14207e077fa2702ce17a2576663f6e58160456303b326ae8c3ea75ba726fc",
+          "sha1": "76b320cbe058c3312ae32f3afb37f220680bdcb8",
+          "md5": "d19fc1cc9e8dc6475ff11c564361b22e"
+        }
+      ]
+    }
+  ]
+}
