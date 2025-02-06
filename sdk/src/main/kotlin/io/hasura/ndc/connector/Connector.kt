@@ -1,6 +1,6 @@
-package hasura.ndc.connector
+package io.hasura.ndc.connector
 
-import hasura.ndc.ir.*
+import io.hasura.ndc.ir.*
 import io.micrometer.core.instrument.MeterRegistry
 import java.nio.file.Path
 

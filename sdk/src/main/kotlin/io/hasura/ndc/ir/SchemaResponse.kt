@@ -1,4 +1,4 @@
-package hasura.ndc.ir
+package io.hasura.ndc.ir
 
 import kotlinx.serialization.*
 import kotlinx.serialization.json.*

@@ -12,7 +12,7 @@ repositories {
 }
 
 dependencies {
-    implementation(project(":sdk"))
+    implementation(project(":ndc-sdk-kotlin"))
 
     implementation(libs.kotlinx.cli)
     implementation(libs.vertx.core)
@@ -22,11 +22,11 @@ dependencies {
     implementation(libs.logback.classic)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.semver4j)
-    
+
     // Micrometer
     implementation("io.micrometer:micrometer-core:1.11.3")
     implementation("io.micrometer:micrometer-registry-prometheus:1.11.3")
-    
+
     // OpenTelemetry
     implementation(libs.opentelemetry.api)
     implementation(libs.opentelemetry.sdk)

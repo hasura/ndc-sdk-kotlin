@@ -1,10 +1,11 @@
 plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.kotlin.serialization)
-    id("com.github.johnrengelman.shadow") version "8.1.1"
+    id("com.gradleup.shadow") version "8.3.5"
+    `maven-publish`
 }
 
-group = "hasura"
+group = "io.hasura"
 version = "1.0.0"
 
 repositories {
@@ -20,11 +21,11 @@ dependencies {
     implementation(libs.logback.classic)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.semver4j)
-    
+
     // Micrometer
     implementation("io.micrometer:micrometer-core:1.11.3")
     implementation("io.micrometer:micrometer-registry-prometheus:1.11.3")
-    
+
     // OpenTelemetry
     implementation(libs.opentelemetry.api)
     implementation(libs.opentelemetry.sdk)
@@ -34,4 +35,16 @@ dependencies {
 }
 
 tasks.shadowJar {
+}
+
+java {
+    withSourcesJar()
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            from(components["java"])
+        }
+    }
 }

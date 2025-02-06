@@ -1,4 +1,4 @@
-package hasura.ndc.connector
+package io.hasura.ndc.connector
 
 import io.opentelemetry.api.OpenTelemetry
 import io.opentelemetry.api.common.AttributeKey
@@ -137,8 +137,8 @@ object Telemetry {
         attributes: Attributes,
         block: suspend (Span) -> T
     ): T = withInternalActiveSpan(
-        name, 
-        block, 
+        name,
+        block,
         Attributes.builder()
             .putAll(USER_VISIBLE_SPAN_ATTRIBUTE)
             .putAll(attributes)
