@@ -47,15 +47,4 @@ publishing {
             from(components["java"])
         }
     }
-
-    repositories {
-        maven {
-            name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/hasura/ndc-sdk-kotlin")
-            credentials {
-                username = project.findProperty("gpr.user") as String? ?: System.getenv("GH_USERNAME")
-                password = project.findProperty("gpr.key") as String? ?: System.getenv("GH_TOKEN")
-            }
-        }
-    }
 }
