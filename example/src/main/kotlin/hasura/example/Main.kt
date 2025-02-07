@@ -1,10 +1,6 @@
 package hasura.example
 
-import hasura.ndc.connector.*
-import hasura.ndc.ir.*
-import io.hasura.ndc.connector.Connector
-import io.hasura.ndc.connector.ConnectorError
-import io.hasura.ndc.connector.startServer
+import io.hasura.ndc.connector.*
 import io.hasura.ndc.ir.*
 import io.micrometer.core.instrument.MeterRegistry
 import kotlinx.serialization.json.*
