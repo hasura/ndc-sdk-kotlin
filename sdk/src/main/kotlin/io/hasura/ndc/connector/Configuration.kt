@@ -85,7 +85,7 @@ data class ServerOptions(
 
                 val finalHost = System.getenv("HASURA_CONNECTOR_HOST")
                     ?: host
-                    ?: "localhost"
+                    ?: "0.0.0.0"
 
                 val finalPort = System.getenv("HASURA_CONNECTOR_PORT")?.toIntOrNull()
                     ?: port
