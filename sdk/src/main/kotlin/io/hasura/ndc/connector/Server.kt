@@ -1,5 +1,6 @@
 package io.hasura.ndc.connector
 
+import ch.qos.logback.classic.Logger
 import com.vdurmont.semver4j.Requirement
 import com.vdurmont.semver4j.Semver
 import io.hasura.ndc.ir.*
@@ -52,6 +53,18 @@ suspend fun <Configuration, State> startServer(
     options: ServerOptions
 ) {
     val vertx = Vertx.vertx()
+
+    // Set log level based on configuration
+    val rootLogger = LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME) as ch.qos.logback.classic.Logger
+    val logLevel = when (options.logLevel.uppercase()) {
+        "TRACE" -> ch.qos.logback.classic.Level.TRACE
+        "DEBUG" -> ch.qos.logback.classic.Level.DEBUG
+        "INFO" -> ch.qos.logback.classic.Level.INFO
+        "WARN" -> ch.qos.logback.classic.Level.WARN
+        "ERROR" -> ch.qos.logback.classic.Level.ERROR
+        else -> ch.qos.logback.classic.Level.INFO
+    }
+    rootLogger.level = logLevel
 
     vertx.deployVerticle(object : CoroutineVerticle(), CoroutineRouterSupport {
         private val logger = LoggerFactory.getLogger(this::class.java)
