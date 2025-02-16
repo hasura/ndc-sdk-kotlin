@@ -29,7 +29,7 @@ data class QueryRequest(
     /**
      * Variables to be used in the query
      */
-    val variables: List<Map<String, JsonElement>> = emptyList()
+    val variables: List<Map<String, JsonElement>>? = null
 )
 
 @Serializable
