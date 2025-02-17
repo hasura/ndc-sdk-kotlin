@@ -16,6 +16,7 @@ import io.vertx.ext.web.handler.BodyHandler
 import io.vertx.kotlin.coroutines.CoroutineRouterSupport
 import io.vertx.kotlin.coroutines.CoroutineVerticle
 import io.vertx.kotlin.coroutines.dispatcher
+import java.util.TimeZone
 import kotlinx.cli.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -70,6 +71,9 @@ suspend fun <Configuration, State> startServer(
         private val logger = LoggerFactory.getLogger(this::class.java)
 
         override suspend fun start() {
+            // Set default timezone to UTC
+            TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
+
             // Initialize telemetry
             Telemetry.initTelemetry()
 
