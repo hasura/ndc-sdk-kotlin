@@ -3,6 +3,7 @@ package io.hasura.ndc.connector
 import io.hasura.ndc.ir.*
 import io.micrometer.core.instrument.MeterRegistry
 import java.nio.file.Path
+import kotlinx.serialization.json.JsonArray
 
 interface Connector<Configuration, State> {
     /**
@@ -74,4 +75,13 @@ interface Connector<Configuration, State> {
         state: State,
         request: QueryRequest
     ): QueryResponse
+
+    /**
+     * Execute a sql query
+     */
+    suspend fun sql(
+        configuration: Configuration,
+        state: State,
+        request: SQLRequest
+    ): JsonArray
 }
