@@ -103,4 +103,12 @@ class ExampleConnector : Connector<Unit, Unit> {
     ): MutationResponse {
         throw ConnectorError.NotSupported("Mutations are not supported")
     }
+
+    override suspend fun sql(
+      configuration: Unit,
+      state: Unit,
+      request: SQLRequest
+    ): JsonArray {
+        throw ConnectorError.NotSupported("SQL is not supported")
+    }
 }
