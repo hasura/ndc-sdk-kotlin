@@ -2,24 +2,24 @@ package io.hasura.ndc.connector
 
 import io.opentelemetry.api.OpenTelemetry
 import io.opentelemetry.api.common.AttributeKey
+import io.opentelemetry.api.common.AttributeKey.stringKey
 import io.opentelemetry.api.common.Attributes
 import io.opentelemetry.api.trace.Span
 import io.opentelemetry.api.trace.StatusCode
 import io.opentelemetry.api.trace.Tracer
-import io.opentelemetry.exporter.otlp.trace.OtlpGrpcSpanExporter
+import io.opentelemetry.context.Context
+import io.opentelemetry.exporter.otlp.http.metrics.OtlpHttpMetricExporter
+import io.opentelemetry.exporter.otlp.http.trace.OtlpHttpSpanExporter
 import io.opentelemetry.exporter.otlp.metrics.OtlpGrpcMetricExporter
+import io.opentelemetry.exporter.otlp.trace.OtlpGrpcSpanExporter
 import io.opentelemetry.sdk.OpenTelemetrySdk
-import io.opentelemetry.sdk.trace.SdkTracerProvider
-import io.opentelemetry.sdk.trace.export.BatchSpanProcessor
 import io.opentelemetry.sdk.metrics.SdkMeterProvider
 import io.opentelemetry.sdk.metrics.export.PeriodicMetricReader
-import io.opentelemetry.exporter.otlp.http.trace.OtlpHttpSpanExporter
-import io.opentelemetry.exporter.otlp.http.metrics.OtlpHttpMetricExporter
 import io.opentelemetry.sdk.resources.Resource
-import io.opentelemetry.api.common.AttributeKey.stringKey
-import java.util.concurrent.TimeUnit
-import io.opentelemetry.context.Context
+import io.opentelemetry.sdk.trace.SdkTracerProvider
+import io.opentelemetry.sdk.trace.export.BatchSpanProcessor
 import java.net.InetAddress
+import java.util.concurrent.TimeUnit
 
 object Telemetry {
     enum class Protocol {
@@ -145,6 +145,19 @@ object Telemetry {
             .build()
     )
 
+    suspend fun <T> withActiveSpanContext(
+        parentContext: Context,
+        name: String,
+        block: suspend (Span) -> T
+    ): T {
+        val scope = parentContext.makeCurrent()
+        try {
+            return withActiveSpan(name, block)
+        } finally {
+            scope.close()
+        }
+    }
+
     private suspend fun <T> withInternalActiveSpan(
         name: String,
         block: suspend (Span) -> T,
@@ -156,7 +169,7 @@ object Telemetry {
             .setAllAttributes(attributes)
             .startSpan()
 
-        return span.makeCurrent().use { scope ->
+        return span.makeCurrent().use { _ ->
             try {
                 val result = block(span)
                 span.setStatus(StatusCode.OK)
