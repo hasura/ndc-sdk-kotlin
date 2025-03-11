@@ -72,9 +72,6 @@ suspend fun <Configuration, State> startServer(
         private val logger = LoggerFactory.getLogger(this::class.java)
 
         override suspend fun start() {
-            // Set default timezone to UTC
-            TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
-
             // Initialize telemetry
             Telemetry.initTelemetry()
 
