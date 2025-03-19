@@ -15,17 +15,11 @@ import io.vertx.ext.web.RoutingContext
 import io.vertx.ext.web.handler.BodyHandler
 import io.vertx.kotlin.coroutines.CoroutineRouterSupport
 import io.vertx.kotlin.coroutines.CoroutineVerticle
-import io.vertx.kotlin.coroutines.dispatcher
-import java.util.TimeZone
-import kotlinx.cli.*
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
-import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import org.slf4j.LoggerFactory
@@ -107,12 +101,20 @@ suspend fun <Configuration, State> startServer(
                 ctx.response()
                     .setStatusCode(statusCode)
                     .putHeader("content-type", "application/json")
-                    .end(Json.encodeToString(
-                        ErrorResponse(
-                        message = "Internal Error",
-                        details = JsonObject(mapOf("cause" to JsonPrimitive(failure?.message ?: "Unknown error")))
+                    .end(
+                        Json.encodeToString(
+                            ErrorResponse(
+                                message = "Internal Error",
+                                details = JsonObject(
+                                    mapOf(
+                                        "cause" to JsonPrimitive(
+                                            failure?.message ?: "Unknown error"
+                                        )
+                                    )
+                                )
+                            )
+                        )
                     )
-                    ))
             }
 
             // Authentication middleware
@@ -172,6 +174,13 @@ suspend fun <Configuration, State> startServer(
                 }
             }
 
+
+            router.post("/query/rel").coHandler { ctx ->
+                ctx.handleJsonRequest<SQLPlan, JsonArray>("sql") { request ->
+                    connector.sql(configuration, state, request.rel)
+                }
+            }
+
             router.post("/mutation").coHandler { ctx ->
                 ctx.handleJsonRequest<MutationRequest, MutationResponse>("mutation") { request ->
                     connector.mutation(configuration, state, request)
@@ -181,12 +190,6 @@ suspend fun <Configuration, State> startServer(
             router.post("/mutation/explain").coHandler { ctx ->
                 ctx.handleJsonRequest<MutationRequest, ExplainResponse>("mutationExplain") { request ->
                     connector.mutationExplain(configuration, state, request)
-                }
-            }
-
-            router.post("/sql").coHandler { ctx ->
-                ctx.handleJsonRequest<SQLRequest, JsonArray>("sql") { request ->
-                    connector.sql(configuration, state, request)
                 }
             }
 
@@ -210,19 +213,23 @@ private fun authenticationHandler(ctx: RoutingContext, serviceTokenSecret: Strin
         return
     }
 
+
     val expectedAuthHeader = serviceTokenSecret?.let { "Bearer $it" }
-    val authHeader = ctx.request().getHeader("Authorization")?.replace(Regex("^bearer", RegexOption.IGNORE_CASE), "Bearer")
+    val authHeader =
+        ctx.request().getHeader("Authorization")?.replace(Regex("^bearer", RegexOption.IGNORE_CASE), "Bearer")
 
     if (authHeader != expectedAuthHeader) {
         ctx.response()
             .setStatusCode(401)
             .putHeader("content-type", "application/json")
-            .end(Json.encodeToString(
-                ErrorResponse(
-                details = JsonObject(mapOf("cause" to JsonPrimitive("Bearer token does not match."))),
-                message = "Internal Error"
+            .end(
+                Json.encodeToString(
+                    ErrorResponse(
+                        details = JsonObject(mapOf("cause" to JsonPrimitive("Bearer token does not match."))),
+                        message = "Internal Error"
+                    )
+                )
             )
-            ))
         return
     }
     ctx.next()
@@ -263,12 +270,14 @@ private fun handleVersionError(ctx: RoutingContext, message: String) {
     ctx.response()
         .setStatusCode(400)
         .putHeader("content-type", "application/json")
-        .end(Json.encodeToString(
-            ErrorResponse(
-            message = message,
-            details = null
+        .end(
+            Json.encodeToString(
+                ErrorResponse(
+                    message = message,
+                    details = null
+                )
+            )
         )
-        ))
 }
 
 private inline fun <reified T> RoutingContext.sendJson(response: T) {
@@ -303,13 +312,16 @@ private suspend inline fun <reified T, reified R> RoutingContext.handleJsonReque
                 this.response()
                     .setStatusCode(400)
                     .putHeader("content-type", "application/json")
-                    .end(Json.encodeToString(
-                        ErrorResponse(
-                        message = "Invalid JSON request body",
-                        details = JsonObject(mapOf("cause" to JsonPrimitive(e.message ?: "Unknown error")))
+                    .end(
+                        Json.encodeToString(
+                            ErrorResponse(
+                                message = "Invalid JSON request body",
+                                details = JsonObject(mapOf("cause" to JsonPrimitive(e.message ?: "Unknown error")))
+                            )
+                        )
                     )
-                    ))
             }
+
             else -> throw e
         }
     }

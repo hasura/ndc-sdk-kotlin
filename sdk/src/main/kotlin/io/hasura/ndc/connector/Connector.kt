@@ -82,6 +82,6 @@ interface Connector<Configuration, State> {
     suspend fun sql(
         configuration: Configuration,
         state: State,
-        request: SQLRequest
+        plan: Plan
     ): JsonArray
 }
