@@ -423,8 +423,8 @@ sealed interface PlanExpression {
     data class Var(val expr: PlanExpression) : PlanExpression
 }
 
-// Sent by V3 engine as the input to /sql
+// Sent by V3 engine as the input to /query/rel
 @Serializable
 data class SQLPlan(
-    val plan: Plan,
+    val rel: Plan,
 )
