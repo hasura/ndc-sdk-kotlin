@@ -177,7 +177,7 @@ suspend fun <Configuration, State> startServer(
 
             router.post("/query/rel").coHandler { ctx ->
                 ctx.handleJsonRequest<QueryRel, JsonArray>("queryRel") { request ->
-                    connector.queryRel(configuration, state, request.rel)
+                    connector.queryRel(configuration, state, request)
                 }
             }
 

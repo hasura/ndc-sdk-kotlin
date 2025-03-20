@@ -107,7 +107,7 @@ class ExampleConnector : Connector<Unit, Unit> {
     override suspend fun queryRel(
       configuration: Unit,
       state: Unit,
-      query: Rel
+      request: QueryRel
     ): JsonArray {
         throw ConnectorError.NotSupported("QueryRel is not supported")
     }

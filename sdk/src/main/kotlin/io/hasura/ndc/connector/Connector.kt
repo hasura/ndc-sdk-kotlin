@@ -82,6 +82,6 @@ interface Connector<Configuration, State> {
     suspend fun queryRel(
         configuration: Configuration,
         state: State,
-        query: Rel
+        request: QueryRel
     ): JsonArray
 }
