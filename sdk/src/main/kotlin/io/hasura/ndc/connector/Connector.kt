@@ -77,11 +77,11 @@ interface Connector<Configuration, State> {
     ): QueryResponse
 
     /**
-     * Execute a sql query
+     * Execute a query rel
      */
-    suspend fun sql(
+    suspend fun queryRel(
         configuration: Configuration,
         state: State,
-        plan: Plan
+        query: Rel
     ): JsonArray
 }

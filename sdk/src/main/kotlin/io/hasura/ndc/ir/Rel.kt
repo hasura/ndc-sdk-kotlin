@@ -12,78 +12,85 @@ typealias DataConnectorColumnName = String
 @Serializable
 @JsonClassDiscriminator("type")
 @OptIn(ExperimentalSerializationApi::class)
-sealed interface Plan {
+sealed interface Rel {
     @Serializable
     @SerialName("From")
     data class From(
         val collection: CollectionName,
         val columns: List<DataConnectorColumnName>
-    ) : Plan
+    ) : Rel
 
     @Serializable
     @SerialName("Limit")
     data class Limit(
-        val input: Plan,
+        val input: Rel,
         val fetch: Int?, // corresponds to Option<usize>
         val skip: Int
-    ) : Plan
+    ) : Rel
 
     @Serializable
     @SerialName("Project")
     data class Project(
-        val input: Plan,
-        val exprs: List<PlanExpression>
-    ) : Plan
+        val input: Rel,
+        val exprs: List<RelExpression>
+    ) : Rel
 
     @Serializable
     @SerialName("Filter")
     data class Filter(
-        val input: Plan,
-        val predicate: PlanExpression
-    ) : Plan
+        val input: Rel,
+        val predicate: RelExpression
+    ) : Rel
 
     @Serializable
     @SerialName("Sort")
     data class Sort(
-        val input: Plan,
+        val input: Rel,
         val exprs: List<SortExpr>
-    ) : Plan
+    ) : Rel
 
     @Serializable
     @SerialName("Distinct")
     data class Distinct(
-        val input: Plan
-    ) : Plan
+        val input: Rel
+    ) : Rel
 
     @Serializable
     @SerialName("DistinctOn")
     data class DistinctOn(
-        val input: Plan,
-        val exprs: List<PlanExpression>
-    ) : Plan
+        val input: Rel,
+        val exprs: List<RelExpression>
+    ) : Rel
 
     @Serializable
     @SerialName("Join")
     data class Join(
-        val left: Plan,
-        val right: Plan,
+        val left: Rel,
+        val right: Rel,
         val on: List<JoinOn>,
         val join_type: JoinType
-    ) : Plan
+    ) : Rel
 
     @Serializable
     @SerialName("Aggregate")
     data class Aggregate(
-        val input: Plan,
-        val group_by: List<PlanExpression>,
-        val aggregates: List<PlanExpression>
-    ) : Plan
+        val input: Rel,
+        val group_by: List<RelExpression>,
+        val aggregates: List<RelExpression>
+    ) : Rel
 }
 
 @Serializable
+@SerialName("CaseWhen")
+data class CaseWhen(
+    val `when`: RelExpression,
+    val then: RelExpression
+)
+
+@Serializable
 data class JoinOn(
-    val left: PlanExpression,
-    val right: PlanExpression
+    val left: RelExpression,
+    val right: RelExpression
 )
 
 @Serializable
@@ -103,7 +110,7 @@ enum class JoinType {
 
 @Serializable
 data class SortExpr(
-    val expr: PlanExpression,
+    val expr: RelExpression,
     val asc: Boolean,
     val nulls_first: Boolean
 )
@@ -224,207 +231,219 @@ sealed interface Literal {
 @Serializable
 @JsonClassDiscriminator("type")
 @OptIn(ExperimentalSerializationApi::class)
-sealed interface PlanExpression {
+sealed interface RelExpression {
     @Serializable
     @SerialName("Literal")
-    data class PlanLiteral(val literal: Literal) : PlanExpression
+    data class RelLiteral(val literal: Literal) : RelExpression
 
     @Serializable
     @SerialName("Column")
-    data class Column(val index: Int) : PlanExpression
+    data class Column(val index: Int) : RelExpression
+
+    @Serializable
+    @SerialName("Cast")
+    data class Cast(val expr: RelExpression, val as_type: Literal) : RelExpression
+
+    @Serializable
+    @SerialName("TryCast")
+    data class TryCast(val expr: RelExpression, val as_type: Literal) : RelExpression
+
+    @Serializable
+    @SerialName("Case")
+    data class Case(val `when`: List<CaseWhen>, val default: RelExpression?) : RelExpression
 
     // Binary operators
     @Serializable
     @SerialName("And")
-    data class And(val left: PlanExpression, val right: PlanExpression) : PlanExpression
+    data class And(val left: RelExpression, val right: RelExpression) : RelExpression
 
     @Serializable
     @SerialName("Or")
-    data class Or(val left: PlanExpression, val right: PlanExpression) : PlanExpression
+    data class Or(val left: RelExpression, val right: RelExpression) : RelExpression
 
     @Serializable
     @SerialName("Eq")
-    data class Eq(val left: PlanExpression, val right: PlanExpression) : PlanExpression
+    data class Eq(val left: RelExpression, val right: RelExpression) : RelExpression
 
     @Serializable
     @SerialName("NotEq")
-    data class NotEq(val left: PlanExpression, val right: PlanExpression) : PlanExpression
+    data class NotEq(val left: RelExpression, val right: RelExpression) : RelExpression
 
     @Serializable
     @SerialName("Lt")
-    data class Lt(val left: PlanExpression, val right: PlanExpression) : PlanExpression
+    data class Lt(val left: RelExpression, val right: RelExpression) : RelExpression
 
     @Serializable
     @SerialName("LtEq")
-    data class LtEq(val left: PlanExpression, val right: PlanExpression) : PlanExpression
+    data class LtEq(val left: RelExpression, val right: RelExpression) : RelExpression
 
     @Serializable
     @SerialName("Gt")
-    data class Gt(val left: PlanExpression, val right: PlanExpression) : PlanExpression
+    data class Gt(val left: RelExpression, val right: RelExpression) : RelExpression
 
     @Serializable
     @SerialName("GtEq")
-    data class GtEq(val left: PlanExpression, val right: PlanExpression) : PlanExpression
+    data class GtEq(val left: RelExpression, val right: RelExpression) : RelExpression
 
     @Serializable
     @SerialName("Plus")
-    data class Plus(val left: PlanExpression, val right: PlanExpression) : PlanExpression
+    data class Plus(val left: RelExpression, val right: RelExpression) : RelExpression
 
     @Serializable
     @SerialName("Minus")
-    data class Minus(val left: PlanExpression, val right: PlanExpression) : PlanExpression
+    data class Minus(val left: RelExpression, val right: RelExpression) : RelExpression
 
     @Serializable
     @SerialName("Multiply")
-    data class Multiply(val left: PlanExpression, val right: PlanExpression) : PlanExpression
+    data class Multiply(val left: RelExpression, val right: RelExpression) : RelExpression
 
     @Serializable
     @SerialName("Divide")
-    data class Divide(val left: PlanExpression, val right: PlanExpression) : PlanExpression
+    data class Divide(val left: RelExpression, val right: RelExpression) : RelExpression
 
     @Serializable
     @SerialName("Modulo")
-    data class Modulo(val left: PlanExpression, val right: PlanExpression) : PlanExpression
+    data class Modulo(val left: RelExpression, val right: RelExpression) : RelExpression
 
     @Serializable
     @SerialName("Like")
-    data class Like(val expr: PlanExpression, val pattern: PlanExpression) : PlanExpression
+    data class Like(val expr: RelExpression, val pattern: RelExpression) : RelExpression
 
     @Serializable
     @SerialName("ILike")
-    data class ILike(val expr: PlanExpression, val pattern: PlanExpression) : PlanExpression
+    data class ILike(val expr: RelExpression, val pattern: RelExpression) : RelExpression
 
     @Serializable
     @SerialName("NotLike")
-    data class NotLike(val expr: PlanExpression, val pattern: PlanExpression) : PlanExpression
+    data class NotLike(val expr: RelExpression, val pattern: RelExpression) : RelExpression
 
     @Serializable
     @SerialName("NotILike")
-    data class NotILike(val expr: PlanExpression, val pattern: PlanExpression) : PlanExpression
+    data class NotILike(val expr: RelExpression, val pattern: RelExpression) : RelExpression
 
     // Unary operators
     @Serializable
     @SerialName("Not")
-    data class Not(val expr: PlanExpression) : PlanExpression
+    data class Not(val expr: RelExpression) : RelExpression
 
     @Serializable
     @SerialName("IsNotNull")
-    data class IsNotNull(val expr: PlanExpression) : PlanExpression
+    data class IsNotNull(val expr: RelExpression) : RelExpression
 
     @Serializable
     @SerialName("IsNull")
-    data class IsNull(val expr: PlanExpression) : PlanExpression
+    data class IsNull(val expr: RelExpression) : RelExpression
 
     @Serializable
     @SerialName("IsTrue")
-    data class IsTrue(val expr: PlanExpression) : PlanExpression
+    data class IsTrue(val expr: RelExpression) : RelExpression
 
     @Serializable
     @SerialName("IsFalse")
-    data class IsFalse(val expr: PlanExpression) : PlanExpression
+    data class IsFalse(val expr: RelExpression) : RelExpression
 
     @Serializable
     @SerialName("IsUnknown")
-    data class IsUnknown(val expr: PlanExpression) : PlanExpression
+    data class IsUnknown(val expr: RelExpression) : RelExpression
 
     @Serializable
     @SerialName("IsNotTrue")
-    data class IsNotTrue(val expr: PlanExpression) : PlanExpression
+    data class IsNotTrue(val expr: RelExpression) : RelExpression
 
     @Serializable
     @SerialName("IsNotFalse")
-    data class IsNotFalse(val expr: PlanExpression) : PlanExpression
+    data class IsNotFalse(val expr: RelExpression) : RelExpression
 
     @Serializable
     @SerialName("IsNotUnknown")
-    data class IsNotUnknown(val expr: PlanExpression) : PlanExpression
+    data class IsNotUnknown(val expr: RelExpression) : RelExpression
 
     @Serializable
     @SerialName("Negative")
-    data class Negative(val expr: PlanExpression) : PlanExpression
+    data class Negative(val expr: RelExpression) : RelExpression
 
     // Other operators
     @Serializable
     @SerialName("Between")
-    data class Between(val low: PlanExpression, val high: PlanExpression) : PlanExpression
+    data class Between(val low: RelExpression, val high: RelExpression) : RelExpression
 
     @Serializable
     @SerialName("NotBetween")
-    data class NotBetween(val low: PlanExpression, val high: PlanExpression) : PlanExpression
+    data class NotBetween(val low: RelExpression, val high: RelExpression) : RelExpression
 
     @Serializable
     @SerialName("In")
-    data class In(val expr: PlanExpression, val list: List<PlanExpression>) : PlanExpression
+    data class In(val expr: RelExpression, val list: List<RelExpression>) : RelExpression
 
     @Serializable
     @SerialName("NotIn")
-    data class NotIn(val expr: PlanExpression, val list: List<PlanExpression>) : PlanExpression
+    data class NotIn(val expr: RelExpression, val list: List<RelExpression>) : RelExpression
 
     // Scalar functions
     @Serializable
     @SerialName("ToLower")
-    data class ToLower(val expr: PlanExpression) : PlanExpression
+    data class ToLower(val expr: RelExpression) : RelExpression
 
     @Serializable
     @SerialName("ToUpper")
-    data class ToUpper(val expr: PlanExpression) : PlanExpression
+    data class ToUpper(val expr: RelExpression) : RelExpression
 
     // Aggregate functions
     @Serializable
     @SerialName("Average")
-    data class Average(val expr: PlanExpression) : PlanExpression
+    data class Average(val expr: RelExpression) : RelExpression
 
     @Serializable
     @SerialName("BoolAnd")
-    data class BoolAnd(val expr: PlanExpression) : PlanExpression
+    data class BoolAnd(val expr: RelExpression) : RelExpression
 
     @Serializable
     @SerialName("BoolOr")
-    data class BoolOr(val expr: PlanExpression) : PlanExpression
+    data class BoolOr(val expr: RelExpression) : RelExpression
 
     @Serializable
     @SerialName("Count")
-    data class Count(val expr: PlanExpression) : PlanExpression
+    data class Count(val expr: RelExpression) : RelExpression
 
     @Serializable
     @SerialName("FirstValue")
-    data class FirstValue(val expr: PlanExpression) : PlanExpression
+    data class FirstValue(val expr: RelExpression) : RelExpression
 
     @Serializable
     @SerialName("LastValue")
-    data class LastValue(val expr: PlanExpression) : PlanExpression
+    data class LastValue(val expr: RelExpression) : RelExpression
 
     @Serializable
     @SerialName("Max")
-    data class Max(val expr: PlanExpression) : PlanExpression
+    data class Max(val expr: RelExpression) : RelExpression
 
     @Serializable
     @SerialName("Mean")
-    data class Mean(val expr: PlanExpression) : PlanExpression
+    data class Mean(val expr: RelExpression) : RelExpression
 
     @Serializable
     @SerialName("Median")
-    data class Median(val expr: PlanExpression) : PlanExpression
+    data class Median(val expr: RelExpression) : RelExpression
 
     @Serializable
     @SerialName("Min")
-    data class Min(val expr: PlanExpression) : PlanExpression
+    data class Min(val expr: RelExpression) : RelExpression
 
     @Serializable
     @SerialName("StringAgg")
-    data class StringAgg(val expr: PlanExpression) : PlanExpression
+    data class StringAgg(val expr: RelExpression) : RelExpression
 
     @Serializable
     @SerialName("Sum")
-    data class Sum(val expr: PlanExpression) : PlanExpression
+    data class Sum(val expr: RelExpression) : RelExpression
 
     @Serializable
     @SerialName("Var")
-    data class Var(val expr: PlanExpression) : PlanExpression
+    data class Var(val expr: RelExpression) : RelExpression
 }
 
 // Sent by V3 engine as the input to /query/rel
 @Serializable
-data class SQLPlan(
-    val rel: Plan,
+data class QueryRel(
+    val rel: Rel,
 )
