@@ -127,6 +127,12 @@ suspend fun <Configuration, State> startServer(
                 versionCheckHandler(ctx)
             }
 
+            // Log request body middleware
+            router.route().handler { ctx ->
+                ConnectorLogger.logger.debug("Request body:\n{}", ctx.body().asString())
+                ctx.next()
+            }
+
             // Routes
             router.get("/capabilities").coHandler { ctx ->
                 val response = Telemetry.withActiveSpan("getCapabilities") {
@@ -306,6 +312,7 @@ private suspend inline fun <reified T, reified R> RoutingContext.handleJsonReque
         }
         this.sendJson(response)
     } catch (e: Exception) {
+        ConnectorLogger.logger.error("Error handling request", e)
         when (e) {
             is io.vertx.core.json.DecodeException,
             is kotlinx.serialization.SerializationException -> {
