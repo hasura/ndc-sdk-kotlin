@@ -231,6 +231,123 @@ sealed interface Literal {
 @Serializable
 @JsonClassDiscriminator("type")
 @OptIn(ExperimentalSerializationApi::class)
+sealed interface RelScalarType {
+    @Serializable
+    @SerialName("Null")
+    data object Null : RelScalarType
+
+    @Serializable
+    @SerialName("Boolean")
+    data object Boolean : RelScalarType
+
+    @Serializable
+    @SerialName("Float32")
+    data object Float32 : RelScalarType
+
+    @Serializable
+    @SerialName("Float64")
+    data object Float64 : RelScalarType
+
+    @Serializable
+    @SerialName("Int8")
+    data object Int8 : RelScalarType
+
+    @Serializable
+    @SerialName("Int16")
+    data object Int16 : RelScalarType
+
+    @Serializable
+    @SerialName("Int32")
+    data object Int32 : RelScalarType
+
+    @Serializable
+    @SerialName("Int64")
+    data object Int64 : RelScalarType
+
+    @Serializable
+    @SerialName("UInt8")
+    data object UInt8 : RelScalarType
+
+    @Serializable
+    @SerialName("UInt16")
+    data object UInt16 : RelScalarType
+
+    @Serializable
+    @SerialName("UInt32")
+    data object UInt32 : RelScalarType
+
+    @Serializable
+    @SerialName("UInt64")
+    data object UInt64 : RelScalarType
+
+    @Serializable
+    @SerialName("Decimal128")
+    data class Decimal128(val scale: UByte, val prec: Byte) : RelScalarType
+
+    @Serializable
+    @SerialName("Utf8")
+    data object Utf8 : RelScalarType
+
+    @Serializable
+    @SerialName("Date32")
+    data object Date32 : RelScalarType
+
+    @Serializable
+    @SerialName("Date64")
+    data object Date64 : RelScalarType
+
+    @Serializable
+    @SerialName("Time32Second")
+    data object Time32Second : RelScalarType
+
+    @Serializable
+    @SerialName("Time32Millisecond")
+    data object Time32Millisecond : RelScalarType
+
+    @Serializable
+    @SerialName("Time64Microsecond")
+    data object Time64Microsecond : RelScalarType
+
+    @Serializable
+    @SerialName("Time64Nanosecond")
+    data object Time64Nanosecond : RelScalarType
+
+    @Serializable
+    @SerialName("TimestampSecond")
+    data object TimestampSecond : RelScalarType
+
+    @Serializable
+    @SerialName("TimestampMillisecond")
+    data object TimestampMillisecond : RelScalarType
+
+    @Serializable
+    @SerialName("TimestampMicrosecond")
+    data object TimestampMicrosecond : RelScalarType
+
+    @Serializable
+    @SerialName("TimestampNanosecond")
+    data object TimestampNanosecond : RelScalarType
+
+    @Serializable
+    @SerialName("DurationSecond")
+    data object DurationSecond : RelScalarType
+
+    @Serializable
+    @SerialName("DurationMillisecond")
+    data object DurationMillisecond : RelScalarType
+
+    @Serializable
+    @SerialName("DurationMicrosecond")
+    data object DurationMicrosecond : RelScalarType
+
+    @Serializable
+    @SerialName("DurationNanosecond")
+    data object DurationNanosecond : RelScalarType
+}
+
+@Serializable
+@JsonClassDiscriminator("type")
+@OptIn(ExperimentalSerializationApi::class)
 sealed interface RelExpression {
     @Serializable
     @SerialName("Literal")
@@ -242,11 +359,11 @@ sealed interface RelExpression {
 
     @Serializable
     @SerialName("Cast")
-    data class Cast(val expr: RelExpression, val as_type: Literal) : RelExpression
+    data class Cast(val expr: RelExpression, val as_type: RelScalarType) : RelExpression
 
     @Serializable
     @SerialName("TryCast")
-    data class TryCast(val expr: RelExpression, val as_type: Literal) : RelExpression
+    data class TryCast(val expr: RelExpression, val as_type: RelScalarType) : RelExpression
 
     @Serializable
     @SerialName("Case")
