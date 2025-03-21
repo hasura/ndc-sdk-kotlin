@@ -557,6 +557,30 @@ sealed interface RelExpression {
     @Serializable
     @SerialName("Var")
     data class Var(val expr: RelExpression) : RelExpression
+
+    @Serializable
+    @SerialName("RowNumber")
+    data class RowNumber(val order_by: List<SortExpr>, val partition_by: List<RelExpression>) : RelExpression
+
+    @Serializable
+    @SerialName("DenseRank")
+    data class DenseRank(val order_by: List<SortExpr>, val partition_by: List<RelExpression>) : RelExpression
+
+    @Serializable
+    @SerialName("NTile")
+    data class NTile(val order_by: List<SortExpr>, val partition_by: List<RelExpression>, val n: RelScalarType.Int64) : RelExpression
+
+    @Serializable
+    @SerialName("Rank")
+    data class Rank(val order_by: List<SortExpr>, val partition_by: List<RelExpression>) : RelExpression
+
+    @Serializable
+    @SerialName("CumeDist")
+    data class CumeDist(val order_by: List<SortExpr>, val partition_by: List<RelExpression>) : RelExpression
+
+    @Serializable
+    @SerialName("PercentRank")
+    data class PercentRank(val order_by: List<SortExpr>, val partition_by: List<RelExpression>) : RelExpression
 }
 
 // Sent by V3 engine as the input to /query/rel
